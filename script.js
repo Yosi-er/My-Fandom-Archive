@@ -1,0 +1,10 @@
+document.addEventListener('DOMContentLoaded',()=>{
+ const toggle=document.querySelector('.menu-toggle'),nav=document.querySelector('.nav');
+ if(toggle&&nav)toggle.addEventListener('click',()=>{nav.classList.toggle('open');toggle.setAttribute('aria-expanded',nav.classList.contains('open')?'true':'false')});
+ const page=location.pathname.split('/').pop()||'index.html';document.querySelectorAll('.nav a').forEach(a=>{if(a.getAttribute('href')===page)a.classList.add('active')});
+ const filterButtons=[...document.querySelectorAll('[data-filter-group]')];let currentGroup='全部',currentTag='全部';
+ function filterPosts(){const cards=[...document.querySelectorAll('[data-post]')];let visible=0;cards.forEach(card=>{const group=card.dataset.group||'',tags=(card.dataset.tags||'').split(',');const okGroup=currentGroup==='全部'||group===currentGroup;const okTag=currentTag==='全部'||tags.includes(currentTag);card.style.display=okGroup&&okTag?'':'none';if(okGroup&&okTag)visible++});const empty=document.querySelector('.empty');if(empty)empty.style.display=visible?'none':'block'}
+ filterButtons.forEach(btn=>btn.addEventListener('click',()=>{const group=btn.dataset.filterGroup;if(group)currentGroup=group;const tag=btn.dataset.filterTag;if(tag)currentTag=tag;const family=group?'[data-filter-group]':'[data-filter-tag]';document.querySelectorAll(family).forEach(b=>b.classList.toggle('active',b===btn));filterPosts()}));
+ const sort=document.querySelector('#post-sort');if(sort)sort.addEventListener('change',()=>{const grid=document.querySelector('#post-grid');if(!grid)return;[...grid.querySelectorAll('[data-post]')].sort((a,b)=>sort.value==='oldest'?a.dataset.date.localeCompare(b.dataset.date):b.dataset.date.localeCompare(a.dataset.date)).forEach(el=>grid.appendChild(el))});
+ const search=document.querySelector('#site-search');if(search)search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();document.querySelectorAll('[data-searchable]').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(q)?'':'none'})});
+});
